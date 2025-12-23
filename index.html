@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>给呆呆的圣诞告白 | 跳动爱心与圣诞树</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a0a2a 0%, #2a0a3a 30%, #1a2a3a 70%, #001a2a 100%);
+            color: white;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 场景容器 */
+        .scene {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* 全屏爱心部分 */
+        .heart-section {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            transition: all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* 跳动爱心容器 */
+        .beating-heart-container {
+            position: relative;
+            width: 90vmin;
+            height: 90vmin;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 跳动爱心 */
+        .beating-heart {
+            position: relative;
+            width: 80vmin;
+            height: 80vmin;
+            animation: 
+                heartBeat 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite,
+                heartFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 50px rgba(255, 51, 102, 0.8));
+        }
+
+        .beating-heart:before,
+        .beating-heart:after {
+            content: '';
+            position: absolute;
+            width: 40vmin;
+            height: 64vmin;
+            background: linear-gradient(135deg, 
+                #ff1a6d 0%, 
+                #ff4081 25%, 
+                #ff6699 50%, 
+                #ff8ab3 75%, 
+                #ffb3d9 100%);
+            border-radius: 30vmin 30vmin 0 0;
+            box-shadow: 
+                0 0 60px rgba(255, 26, 109, 0.9),
+                0 0 120px rgba(255, 26, 109, 0.7),
+                0 0 180px rgba(255, 26, 109, 0.5),
+                inset 0 0 40px rgba(255, 255, 255, 0.4);
+        }
+
+        .beating-heart:before {
+            left: 40vmin;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .beating-heart:after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* 爱心核心 */
+        .heart-center {
+            position: absolute;
+            width: 25vmin;
+            height: 25vmin;
+            background: radial-gradient(circle, 
+                rgba(255, 255, 255, 0.9) 0%,
+                rgba(255, 102, 153, 0.8) 50%,
+                transparent 100%);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            filter: blur(10px);
+            animation: heartPulse 2s ease-in-out infinite alternate;
+        }
+
+        /* 爱心光环 */
+        .heart-aura {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid rgba(255, 102, 153, 0.3);
+            animation: auraExpand 3s linear infinite;
+        }
+
+        .heart-aura:nth-child(2) { animation-delay: 1s; }
+        .heart-aura:nth-child(3) { animation-delay: 2s; }
+
+        /* 提示文字 */
+        .instruction {
+            position: absolute;
+            bottom: 15vh;
+            width: 100%;
+            text-align: center;
+            font-size: 2.2rem;
+            color: white;
+            text-shadow: 
+                0 0 10px #ff0066,
+                0 0 20px #ff0066,
+                0 0 30px #ff0066;
+            animation: textPulse 2s ease-in-out infinite;
+            z-index: 101;
+            cursor: pointer;
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin: 0 auto;
+            max-width: 80%;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .instruction:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-5px);
+        }
+
+        /* 圣诞场景 */
+        .christmas-scene {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8) translateY(50px);
+            transition: all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .scene-active .christmas-scene {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+            pointer-events: all;
+        }
+
+        .scene-active .heart-section {
+            opacity: 0;
+            transform: scale(0.1) translate(-300px, -300px);
+            pointer-events: none;
+        }
+
+        /* 表白祝福语侧边栏 */
+        .love-sidebar {
+            position: fixed;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%) translateX(100%);
+            width: 380px;
+            height: auto;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 20px 0 0 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-right: none;
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            padding: 30px;
+        }
+
+        .love-sidebar.active {
+            transform: translateY(-50%) translateX(0);
+        }
+
+        .love-toggle {
+            position: absolute;
+            left: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 0, 102, 0.9);
+            border-radius: 10px 0 0 10px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-right: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 51;
+        }
+
+        .love-toggle:hover {
+            background: rgba(255, 0, 102, 1);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .love-content {
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.5s ease 0.3s;
+        }
+
+        .love-sidebar.active .love-content {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .love-title {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, 
+                #ffcc00 0%, 
+                #ff3366 33%, 
+                #00ccff 66%, 
+                #ff99ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .special-name {
+            font-size: 3.5rem;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0;
+            text-shadow: 0 0 10px #ff99ff, 0 0 20px #ff99ff;
+            animation: nameGlow 3s ease-in-out infinite;
+        }
+
+        .love-message {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .love-message:nth-child(2) { 
+            border-left-color: #ff3366; 
+            animation: messageAppear 0.5s ease 0.4s forwards;
+        }
+        .love-message:nth-child(3) { 
+            border-left-color: #00ccff; 
+            animation: messageAppear 0.5s ease 0.6s forwards;
+        }
+        .love-message:nth-child(4) { 
+            border-left-color: #ffcc00; 
+            animation: messageAppear 0.5s ease 0.8s forwards;
+        }
+        .love-message:nth-child(5) { 
+            border-left-color: #ff99ff; 
+            animation: messageAppear 0.5s ease 1s forwards;
+        }
+        .love-message:nth-child(6) { 
+            border-left-color: #33ff33; 
+            animation: messageAppear 0.5s ease 1.2s forwards;
+        }
+
+        /* 圣诞树容器 */
+        .tree-container {
+            position: absolute;
+            bottom: 5vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60vw;
+            height: 80vh;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* 圣诞树 */
+        .christmas-tree {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            filter: drop-shadow(0 0 30px rgba(0, 255, 0, 0.4));
+        }
+
+        /* 树层 */
+        .tree-layer {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-color: transparent transparent;
+            animation: treeGlow 4s ease-in-out infinite alternate;
+        }
+
+        .layer-1 {
+            top: 60%;
+            border-width: 0 20vmin 25vmin 20vmin;
+            border-bottom-color: #0da20d;
+            filter: brightness(1.1);
+        }
+
+        .layer-2 {
+            top: 45%;
+            border-width: 0 30vmin 35vmin 30vmin;
+            border-bottom-color: #0ba30b;
+            filter: brightness(1);
+        }
+
+        .layer-3 {
+            top: 30%;
+            border-width: 0 40vmin 45vmin 40vmin;
+            border-bottom-color: #0a8c0a;
+            filter: brightness(0.9);
+        }
+
+        /* 树干 */
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            width: 8vmin;
+            height: 20vmin;
+            background: linear-gradient(to right, 
+                #8B4513 0%, 
+                #A0522D 30%, 
+                #8B4513 70%, 
+                #654321 100%);
+            border-radius: 3vmin 3vmin 0 0;
+            box-shadow: 
+                0 0 20px rgba(139, 69, 19, 0.6),
+                inset 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 树顶星星 */
+        .tree-star {
+            position: absolute;
+            top: 15%;
+            width: 10vmin;
+            height: 10vmin;
+            background: linear-gradient(45deg, 
+                gold 0%, 
+                #ffcc00 50%, 
+                gold 100%);
+            clip-path: polygon(
+                50% 0%, 61% 35%, 98% 35%, 68% 57%,
+                79% 91%, 50% 70%, 21% 91%, 32% 57%,
+                2% 35%, 39% 35%
+            );
+            animation: 
+                starGlow 2s ease-in-out infinite alternate,
+                starFloat 5s ease-in-out infinite;
+            z-index: 11;
+            filter: drop-shadow(0 0 20px gold);
+        }
+
+        /* 装饰球 */
+        .ornament {
+            position: absolute;
+            width: 4vmin;
+            height: 4vmin;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 12;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2vmin;
+            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px currentColor;
+            animation: ornamentFloat 4s ease-in-out infinite;
+        }
+
+        .ornament:hover {
+            transform: scale(1.4) rotate(180deg);
+            box-shadow: 0 0 30px white;
+        }
+
+        /* 控制面板 */
+        .controls {
+            position: absolute;
+            bottom: 6vh;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 20;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 20px 35px;
+            border-radius: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .control-btn {
+            padding: 15px 25px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.1) 0%,
+                rgba(255, 255, 255, 0.05) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            min-width: 120px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 雪花 */
+        .snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .snowflake {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.7;
+            filter: blur(0.5px);
+        }
+
+        /* 背景装饰 */
+        .bg-decorations {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .bg-ornament {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.15;
+            animation: floatBg 20s linear infinite;
+        }
+
+        /* 背景音乐控制 */
+        .music-control {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .music-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .music-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* 动画定义 */
+        @keyframes heartBeat {
+            0%, 100% { 
+                transform: scale(1) translateY(0);
+                filter: drop-shadow(0 0 40px rgba(255, 20, 100, 0.8));
+            }
+            15% { 
+                transform: scale(1.15) translateY(-15px);
+                filter: drop-shadow(0 0 60px rgba(255, 20, 100, 1));
+            }
+            30% { 
+                transform: scale(1.05) translateY(-5px);
+                filter: drop-shadow(0 0 50px rgba(255, 20, 100, 0.9));
+            }
+            45% { 
+                transform: scale(1.2) translateY(-20px);
+                filter: drop-shadow(0 0 70px rgba(255, 20, 100, 1.1));
+            }
+            60% { 
+                transform: scale(1.1) translateY(-10px);
+                filter: drop-shadow(0 0 55px rgba(255, 20, 100, 0.95));
+            }
+            75% { 
+                transform: scale(1.18) translateY(-18px);
+                filter: drop-shadow(0 0 65px rgba(255, 20, 100, 1.05));
+            }
+            90% { 
+                transform: scale(1.08) translateY(-8px);
+                filter: drop-shadow(0 0 52px rgba(255, 20, 100, 0.92));
+            }
+        }
+
+        @keyframes heartFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(10px, -10px) rotate(2deg); }
+            50% { transform: translate(0, 0) rotate(0deg); }
+            75% { transform: translate(-10px, 10px) rotate(-2deg); }
+        }
+
+        @keyframes heartPulse {
+            0% { 
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0.7;
+            }
+            100% { 
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes auraExpand {
+            0% { 
+                transform: scale(0.8);
+                opacity: 1;
+            }
+            100% { 
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes textPulse {
+            0%, 100% { 
+                opacity: 0.8;
+                transform: scale(1) translateY(0);
+            }
+            50% { 
+                opacity: 1;
+                transform: scale(1.03) translateY(-3px);
+            }
+        }
+
+        @keyframes treeGlow {
+            0% { 
+                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.3)) brightness(1);
+            }
+            100% { 
+                filter: drop-shadow(0 0 40px rgba(0, 255, 0, 0.6)) brightness(1.1);
+            }
+        }
+
+        @keyframes starGlow {
+            0% { 
+                filter: drop-shadow(0 0 15px gold) brightness(1);
+            }
+            100% { 
+                filter: drop-shadow(0 0 30px gold) brightness(1.3);
+            }
+        }
+
+        @keyframes starFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-8px) rotate(3deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(8px) rotate(-3deg); }
+        }
+
+        @keyframes ornamentFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-6px) rotate(3deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(6px) rotate(-3deg); }
+        }
+
+        @keyframes messageAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatBg {
+            0% { 
+                transform: translateY(0) rotate(0deg) scale(1);
+                opacity: 0.15;
+            }
+            50% { 
+                transform: translateY(-40px) rotate(180deg) scale(1.05);
+                opacity: 0.2;
+            }
+            100% { 
+                transform: translateY(-80px) rotate(360deg) scale(1);
+                opacity: 0.15;
+            }
+        }
+
+        @keyframes nameGlow {
+            0%, 100% { 
+                text-shadow: 0 0 10px #ff99ff, 0 0 20px #ff99ff;
+                transform: scale(1);
+            }
+            50% { 
+                text-shadow: 0 0 20px #ff99ff, 0 0 40px #ff99ff;
+                transform: scale(1.05);
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .beating-heart {
+                width: 60vmin;
+                height: 60vmin;
+            }
+            
+            .beating-heart:before,
+            .beating-heart:after {
+                width: 30vmin;
+                height: 48vmin;
+            }
+            
+            .instruction {
+                font-size: 1.6rem;
+                padding: 15px 20px;
+            }
+            
+            .tree-container {
+                width: 80vw;
+                height: 70vh;
+            }
+            
+            .layer-1 {
+                border-width: 0 15vmin 20vmin 15vmin;
+            }
+            
+            .layer-2 {
+                border-width: 0 25vmin 30vmin 25vmin;
+            }
+            
+            .layer-3 {
+                border-width: 0 35vmin 40vmin 35vmin;
+            }
+            
+            .tree-trunk {
+                width: 6vmin;
+            }
+            
+            .love-sidebar {
+                width: 280px;
+            }
+            
+            .love-title {
+                font-size: 2.2rem;
+            }
+            
+            .special-name {
+                font-size: 2.5rem;
+            }
+            
+            .love-message {
+                font-size: 1.2rem;
+            }
+            
+            .controls {
+                flex-wrap: wrap;
+                justify-content: center;
+                width: 90%;
+                padding: 15px 20px;
+                gap: 10px;
+            }
+            
+            .control-btn {
+                padding: 12px 20px;
+                font-size: 1.1rem;
+                min-width: 100px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="scene" id="scene">
+        <!-- 音乐控制 -->
+        <div class="music-control">
+            <button class="music-btn" id="musicBtn">🎵</button>
+        </div>
+
+        <!-- 表白祝福语侧边栏 -->
+        <div class="love-sidebar" id="loveSidebar">
+            <div class="love-toggle" id="loveToggle">💌</div>
+            <div class="love-content">
+                <h1 class="love-title">给<span class="special-name">呆呆</span>的<br>圣诞告白</h1>
+                <div class="love-message">亲爱的呆呆，这个圣诞节，我想告诉你：遇见你是我生命中最美的奇迹</div>
+                <div class="love-message">你就像圣诞的星光，温柔地照亮了我的世界，让我的每一天都充满温暖</div>
+                <div class="love-message">在这个特别的夜晚，我想和你一起，创造属于我们的永恒记忆</div>
+                <div class="love-message">愿我的爱如圣诞树上的灯光，永远为你闪耀，永远守护你的笑容</div>
+                <div class="love-message">圣诞快乐，我的女孩，愿我们的故事从这个圣诞节开始，直到永远❤️</div>
+            </div>
+        </div>
+
+        <!-- 全屏爱心 -->
+        <div class="heart-section" id="heartSection">
+            <div class="beating-heart-container">
+                <div class="heart-aura"></div>
+                <div class="heart-aura"></div>
+                <div class="heart-aura"></div>
+                <div class="beating-heart">
+                    <div class="heart-center"></div>
+                </div>
+            </div>
+            <div class="instruction" id="instruction">点击爱心，向呆呆表白 ❤️</div>
+        </div>
+
+        <!-- 雪花 -->
+        <div class="snow" id="snowContainer"></div>
+
+        <!-- 背景装饰 -->
+        <div class="bg-decorations" id="bgDecorations"></div>
+
+        <!-- 圣诞场景 -->
+        <div class="christmas-scene" id="christmasScene">
+            <!-- 圣诞树 -->
+            <div class="tree-container">
+                <div class="christmas-tree" id="christmasTree">
+                    <div class="tree-star" id="treeStar"></div>
+                    <div class="tree-layer layer-3"></div>
+                    <div class="tree-layer layer-2"></div>
+                    <div class="tree-layer layer-1"></div>
+                    <div class="tree-trunk"></div>
+                </div>
+            </div>
+
+            <!-- 控制按钮 -->
+            <div class="controls">
+                <button class="control-btn" id="snowBtn">❄️ 下雪</button>
+                <button class="control-btn" id="lightsBtn">✨ 灯光</button>
+                <button class="control-btn" id="decorateBtn">🎀 装饰</button>
+                <button class="control-btn" id="resetBtn">🔄 重置</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const scene = document.getElementById('scene');
+            const heartSection = document.getElementById('heartSection');
+            const instruction = document.getElementById('instruction');
+            const christmasScene = document.getElementById('christmasScene');
+            const snowContainer = document.getElementById('snowContainer');
+            const bgDecorations = document.getElementById('bgDecorations');
+            const christmasTree = document.getElementById('christmasTree');
+            const loveSidebar = document.getElementById('loveSidebar');
+            const loveToggle = document.getElementById('loveToggle');
+            
+            // 按钮
+            const musicBtn = document.getElementById('musicBtn');
+            const snowBtn = document.getElementById('snowBtn');
+            const lightsBtn = document.getElementById('lightsBtn');
+            const decorateBtn = document.getElementById('decorateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            let isSceneActive = false;
+            let isSnowing = false;
+            let isLightsOn = false;
+            let isLoveActive = false;
+            let snowInterval = null;
+            let audioContext = null;
+            let ornaments = [];
+            let decorations = [];
+            
+            // 创建背景装饰
+            function createBackgroundDecorations() {
+                const decorTypes = ['❤️', '💌', '🎄', '🎁', '🌟', '🔔', '🦌', '⛄', '🍪', '🥛', '✨', '❄️'];
+                const colors = ['#ff0066', '#00ccff', '#ffcc00', '#ff99ff', '#cc66ff'];
+                
+                for (let i = 0; i < 20; i++) {
+                    const decoration = document.createElement('div');
+                    decoration.className = 'bg-ornament';
+                    decoration.textContent = decorTypes[Math.floor(Math.random() * decorTypes.length)];
+                    
+                    decoration.style.left = `${Math.random() * 100}%`;
+                    decoration.style.top = `${Math.random() * 100}%`;
+                    
+                    const size = Math.random() * 1.5 + 1;
+                    decoration.style.fontSize = `${size}rem`;
+                    
+                    decoration.style.color = colors[Math.floor(Math.random() * colors.length)];
+                    
+                    decoration.style.animationDelay = `${Math.random() * 10}s`;
+                    decoration.style.animationDuration = `${Math.random() * 10 + 15}s`;
+                    
+                    bgDecorations.appendChild(decoration);
+                }
+            }
+            
+            // 点击爱心切换到圣诞场景
+            heartSection.addEventListener('click', switchToChristmasScene);
+            instruction.addEventListener('click', switchToChristmasScene);
+            
+            // 切换到圣诞场景
+            function switchToChristmasScene() {
+                if (isSceneActive) return;
+                
+                isSceneActive = true;
+                scene.classList.add('scene-active');
+                
+                // 播放背景音乐
+                playChristmasMusic();
+                
+                // 添加圣诞装饰
+                setTimeout(() => {
+                    addTreeOrnaments();
+                    addTreeLights();
+                }, 800);
+                
+                // 开始下雪
+                toggleSnow();
+            }
+            
+            // 播放圣诞音乐
+            function playChristmasMusic() {
+                if (isMusicPlaying) return;
+                
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    function playNote(frequency, time, duration, type = 'sine') {
+                        const oscillator = audioContext.createOscillator();
+                        const gainNode = audioContext.createGain();
+                        
+                        oscillator.connect(gainNode);
+                        gainNode.connect(audioContext.destination);
+                        
+                        oscillator.frequency.value = frequency;
+                        oscillator.type = type;
+                        
+                        gainNode.gain.setValueAtTime(0, time);
+                        gainNode.gain.linearRampToValueAtTime(0.05, time + 0.05);
+                        gainNode.gain.exponentialRampToValueAtTime(0.001, time + duration);
+                        
+                        oscillator.start(time);
+                        oscillator.stop(time + duration);
+                        
+                        return oscillator;
+                    }
+                    
+                    // 浪漫的圣诞旋律
+                    const melody = [
+                        392, 440, 494, 523, 587, 659, 698, 784,
+                        784, 698, 659, 587, 523, 494, 440, 392,
+                        349, 392, 440, 494, 523, 587, 659, 698
+                    ];
+                    
+                    let time = audioContext.currentTime;
+                    
+                    melody.forEach((frequency, index) => {
+                        const type = index % 3 === 0 ? 'sine' : (index % 3 === 1 ? 'triangle' : 'sawtooth');
+                        playNote(frequency, time + index * 0.2, 0.18, type);
+                    });
+                    
+                    isMusicPlaying = true;
+                    musicBtn.textContent = '🔇';
+                    
+                } catch (e) {
+                    console.log("音频播放失败:", e);
+                    musicBtn.textContent = '🎵';
+                }
+            }
+            
+            // 停止音乐
+            function stopChristmasMusic() {
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+                isMusicPlaying = false;
+                musicBtn.textContent = '🎵';
+            }
+            
+            // 音乐控制
+            musicBtn.addEventListener('click', function() {
+                if (isMusicPlaying) {
+                    stopChristmasMusic();
+                } else {
+                    playChristmasMusic();
+                }
+            });
+            
+            // 表白侧边栏控制
+            loveToggle.addEventListener('click', function() {
+                isLoveActive = !isLoveActive;
+                if (isLoveActive) {
+                    loveSidebar.classList.add('active');
+                    this.textContent = '💖';
+                } else {
+                    loveSidebar.classList.remove('active');
+                    this.textContent = '💌';
+                }
+            });
+            
+            // 添加圣诞树装饰
+            function addTreeOrnaments() {
+                const ornamentPositions = [
+                    {top: '35%', left: '45%', emoji: '❤️', color: '#ff0066'},
+                    {top: '40%', left: '60%', emoji: '💌', color: '#00ccff'},
+                    {top: '45%', left: '35%', emoji: '🎀', color: '#ff99ff'},
+                    {top: '50%', left: '55%', emoji: '💖', color: '#ffcc00'},
+                    {top: '55%', left: '40%', emoji: '💕', color: '#cc66ff'},
+                    {top: '60%', left: '65%', emoji: '⭐', color: '#ffcc00'},
+                    {top: '65%', left: '30%', emoji: '🎁', color: '#ff6699'},
+                    {top: '70%', left: '50%', emoji: '✨', color: '#ffffff'},
+                    {top: '75%', left: '60%', emoji: '🔔', color: '#ffcc00'},
+                    {top: '80%', left: '45%', emoji: '❄️', color: '#00ccff'}
+                ];
+                
+                ornamentPositions.forEach((pos, index) => {
+                    setTimeout(() => {
+                        const ornament = document.createElement('div');
+                        ornament.className = 'ornament';
+                        ornament.style.backgroundColor = pos.color;
+                        ornament.style.color = pos.color;
+                        ornament.style.top = pos.top;
+                        ornament.style.left = pos.left;
+                        ornament.textContent = pos.emoji;
+                        ornament.style.animationDelay = `${index * 0.2}s`;
+                        
+                        ornament.addEventListener('click', function() {
+                            createLoveEffect(this, pos.color);
+                            this.style.transform = 'scale(1.6)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 500);
+                        });
+                        
+                        christmasTree.appendChild(ornament);
+                        ornaments.push(ornament);
+                        
+                        ornament.style.opacity = '0';
+                        ornament.style.transform = 'scale(0) rotate(0deg)';
+                        setTimeout(() => {
+                            ornament.style.transition = 'opacity 0.5s, transform 0.5s';
+                            ornament.style.opacity = '1';
+                            ornament.style.transform = 'scale(1) rotate(360deg)';
+                        }, 10);
+                    }, 300 + index * 200);
+                });
+            }
+            
+            // 添加树灯
+            function addTreeLights() {
+                const lightColors = ['#ff0066', '#00ccff', '#ff99ff', '#ffcc00', '#cc66ff', '#ffffff'];
+                
+                for (let i = 0; i < 25; i++) {
+                    setTimeout(() => {
+                        const light = document.createElement('div');
+                        light.className = 'ornament';
+                        light.style.width = '1.5vmin';
+                        light.style.height = '1.5vmin';
+                        light.style.backgroundColor = lightColors[i % lightColors.length];
+                        light.style.boxShadow = `0 0 15px ${lightColors[i % lightColors.length]}`;
+                        light.style.borderRadius = '50%';
+                        
+                        const angle = Math.random() * Math.PI * 2;
+                        const radius = 10 + Math.random() * 35;
+                        const x = 50 + Math.cos(angle) * radius;
+                        const y = 40 + Math.sin(angle) * radius;
+                        
+                        light.style.left = `${x}%`;
+                        light.style.top = `${y}%`;
+                        light.style.animation = `treeGlow 2s ease-in-out infinite ${i * 0.1}s`;
+                        
+                        christmasTree.appendChild(light);
+                    }, i * 100);
+                }
+            }
+            
+            // 爱心粒子特效
+            function createLoveEffect(element, color) {
+                const rect = element.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                for (let i = 0; i < 25; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.style.position = 'fixed';
+                    sparkle.style.width = '8px';
+                    sparkle.style.height = '8px';
+                    sparkle.style.backgroundColor = color;
+                    sparkle.style.borderRadius = '50%';
+                    sparkle.style.pointerEvents = 'none';
+                    sparkle.style.zIndex = '1000';
+                    sparkle.style.left = `${centerX}px`;
+                    sparkle.style.top = `${centerY}px`;
+                    sparkle.style.boxShadow = `0 0 12px ${color}`;
+                    
+                    // 50%概率创建爱心形状
+                    if (Math.random() > 0.5) {
+                        sparkle.style.width = '12px';
+                        sparkle.style.height = '12px';
+                        sparkle.style.borderRadius = '0';
+                        sparkle.style.background = 'none';
+                        sparkle.style.fontSize = '12px';
+                        sparkle.style.textAlign = 'center';
+                        sparkle.style.lineHeight = '12px';
+                        sparkle.style.color = color;
+                        sparkle.style.boxShadow = 'none';
+                        sparkle.textContent = '❤️';
+                    }
+                    
+                    document.body.appendChild(sparkle);
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = 2 + Math.random() * 3;
+                    const vx = Math.cos(angle) * speed;
+                    const vy = Math.sin(angle) * speed;
+                    
+                    let opacity = 1;
+                    const animate = () => {
+                        opacity -= 0.04;
+                        sparkle.style.opacity = opacity;
+                        sparkle.style.left = `${parseFloat(sparkle.style.left) + vx}px`;
+                        sparkle.style.top = `${parseFloat(sparkle.style.top) + vy}px`;
+                        
+                        if (opacity > 0) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            sparkle.remove();
+                        }
+                    };
+                    
+                    animate();
+                }
+            }
+            
+            // 下雪功能
+            snowBtn.addEventListener('click', toggleSnow);
+            
+            function toggleSnow() {
+                if (isSnowing) {
+                    clearInterval(snowInterval);
+                    snowInterval = null;
+                    isSnowing = false;
+                    snowBtn.textContent = '❄️ 下雪';
+                } else {
+                    isSnowing = true;
+                    snowBtn.textContent = '❄️ 停止';
+                    createSnowflakes();
+                    snowInterval = setInterval(createSnowflakes, 250);
+                }
+            }
+            
+            function createSnowflakes() {
+                for (let i = 0; i < 3; i++) {
+                    const snowflake = document.createElement('div');
+                    snowflake.className = 'snowflake';
+                    
+                    const size = Math.random() * 8 + 4;
+                    snowflake.style.width = `${size}px`;
+                    snowflake.style.height = `${size}px`;
+                    snowflake.style.left = `${Math.random() * 100}%`;
+                    snowflake.style.opacity = Math.random() * 0.7 + 0.2;
+                    
+                    snowContainer.appendChild(snowflake);
+                    
+                    const duration = Math.random() * 5 + 4;
+                    const horizontal = Math.random() * 100 - 50;
+                    
+                    snowflake.animate([
+                        { transform: 'translate(0, 0) rotate(0deg)', opacity: snowflake.style.opacity },
+                        { transform: `translate(${horizontal}px, 100vh) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                    ], {
+                        duration: duration * 1000,
+                        easing: 'linear'
+                    });
+                    
+                    setTimeout(() => snowflake.remove(), duration * 1000);
+                }
+            }
+            
+            // 灯光控制
+            lightsBtn.addEventListener('click', function() {
+                isLightsOn = !isLightsOn;
+                
+                if (isLightsOn) {
+                    // 开启所有灯光
+                    document.querySelectorAll('.ornament').forEach(ornament => {
+                        ornament.style.boxShadow = '0 0 30px white, 0 0 50px white';
+                        ornament.style.filter = 'brightness(1.4)';
+                    });
+                    document.querySelectorAll('.tree-layer').forEach(layer => {
+                        layer.style.filter = 'drop-shadow(0 0 50px rgba(0, 255, 0, 0.8)) brightness(1.2)';
+                    });
+                    this.textContent = '✨ 关灯';
+                } else {
+                    // 恢复原样
+                    document.querySelectorAll('.ornament').forEach(ornament => {
+                        const color = ornament.style.backgroundColor || ornament.style.color;
+                        ornament.style.boxShadow = `0 0 15px ${color}`;
+                        ornament.style.filter = 'brightness(1)';
+                    });
+                    document.querySelectorAll('.tree-layer').forEach(layer => {
+                        layer.style.filter = 'drop-shadow(0 0 20px rgba(0, 255, 0, 0.3))';
+                    });
+                    this.textContent = '✨ 灯光';
+                }
+            });
+            
+            // 装饰功能
+            decorateBtn.addEventListener('click', function() {
+                const decorTypes = ['❤️', '💌', '💖', '💕', '🎀', '🎁', '🌟', '🔔', '✨', '❄️'];
+                const colors = ['#ff0066', '#00ccff', '#ff99ff', '#ffcc00', '#cc66ff', '#ff9966', '#66ccff'];
+                
+                for (let i = 0; i < 2; i++) {
+                    setTimeout(() => {
+                        const decor = decorTypes[Math.floor(Math.random() * decorTypes.length)];
+                        const color = colors[Math.floor(Math.random() * colors.length)];
+                        
+                        const decoration = document.createElement('div');
+                        decoration.className = 'ornament';
+                        decoration.textContent = decor;
+                        decoration.style.position = 'absolute';
+                        decoration.style.top = `${Math.random() * 70 + 10}%`;
+                        decoration.style.left = `${Math.random() * 80 + 10}%`;
+                        decoration.style.fontSize = '2.5vmin';
+                        decoration.style.backgroundColor = color;
+                        decoration.style.color = color;
+                        decoration.style.boxShadow = `0 0 25px ${color}`;
+                        decoration.style.opacity = '0';
+                        decoration.style.transform = 'scale(0)';
+                        
+                        decoration.addEventListener('click', function() {
+                            createLoveEffect(this, color);
+                            this.style.animation = 'none';
+                            setTimeout(() => {
+                                this.remove();
+                                decorations = decorations.filter(d => d !== decoration);
+                            }, 500);
+                        });
+                        
+                        document.querySelector('.christmas-scene').appendChild(decoration);
+                        decorations.push(decoration);
+                        
+                        setTimeout(() => {
+                            decoration.style.transition = 'opacity 0.5s, transform 0.5s';
+                            decoration.style.opacity = '1';
+                            decoration.style.transform = 'scale(1)';
+                        }, 10);
+                    }, i * 300);
+                }
+                
+                this.textContent = '🎀 已添加';
+                setTimeout(() => {
+                    this.textContent = '🎀 装饰';
+                }, 1000);
+            });
+            
+            // 重置功能
+            resetBtn.addEventListener('click', function() {
+                // 停止音乐
+                if (isMusicPlaying) {
+                    stopChristmasMusic();
+                }
+                
+                // 停止下雪
+                if (isSnowing) {
+                    clearInterval(snowInterval);
+                    snowInterval = null;
+                    isSnowing = false;
+                    snowBtn.textContent = '❄️ 下雪';
+                }
+                
+                // 移除所有雪花
+                snowContainer.innerHTML = '';
+                
+                // 重置场景
+                scene.classList.remove('scene-active');
+                isSceneActive = false;
+                isLightsOn = false;
+                isLoveActive = false;
+                
+                // 关闭表白侧边栏
+                loveSidebar.classList.remove('active');
+                loveToggle.textContent = '💌';
+                
+                // 移除额外装饰
+                decorations.forEach(decoration => decoration.remove());
+                decorations = [];
+                
+                // 重置灯光按钮
+                lightsBtn.textContent = '✨ 灯光';
+                
+                // 提示
+                instruction.style.opacity = '1';
+                instruction.textContent = '点击爱心，向呆呆表白 ❤️';
+            });
+            
+            // 初始化
+            createBackgroundDecorations();
+            
+            // 自动展开表白侧边栏
+            setTimeout(() => {
+                if (isSceneActive && !isLoveActive) {
+                    isLoveActive = true;
+                    loveSidebar.classList.add('active');
+                    loveToggle.textContent = '💖';
+                }
+            }, 2000);
+        });
+    </script>
+</body>
+</html>
