@@ -703,9 +703,190 @@
                 transform: scale(1.05);
             }
         }
+        
+        /* 3D旋转照片墙 */
+        .photo-gallery {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+            transition: all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            perspective: 1200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .gallery-active .photo-gallery {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+        
+        .gallery-active .christmas-scene {
+            opacity: 0;
+            transform: scale(0.5);
+            pointer-events: none;
+        }
+        
+        .photo-carousel {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            transform-style: preserve-3d;
+            animation: rotate3D 30s linear infinite;
+        }
+        
+        .photo-carousel.paused {
+            animation-play-state: paused;
+        }
+        
+        .photo-item {
+            position: absolute;
+            width: 280px;
+            height: 380px;
+            left: 50%;
+            top: 50%;
+            margin-left: -140px;
+            margin-top: -190px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 5px solid rgba(255, 255, 255, 0.8);
+            background: #fff;
+        }
+        
+        .photo-item:hover {
+            box-shadow: 0 15px 60px rgba(255, 105, 180, 0.6);
+            transform: scale(1.05);
+        }
+        
+        .photo-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .photo-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            backdrop-filter: blur(10px);
+        }
+        
+        .photo-overlay.active {
+            display: flex;
+        }
+        
+        .photo-overlay img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 20px 80px rgba(255, 255, 255, 0.3);
+            animation: zoomIn 0.3s ease;
+        }
+        
+        .photo-close {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .photo-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+        
+        .gallery-title {
+            position: absolute;
+            top: 10%;
+            width: 100%;
+            text-align: center;
+            font-size: 3rem;
+            background: linear-gradient(45deg, #ff0066, #ff99ff, #00ccff, #ffcc00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            animation: textPulse 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        
+        .gallery-hint {
+            position: absolute;
+            bottom: 10%;
+            width: 100%;
+            text-align: center;
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.8);
+            animation: textPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes rotate3D {
+            0% {
+                transform: rotateY(0deg);
+            }
+            100% {
+                transform: rotateY(360deg);
+            }
+        }
+        
+        @keyframes zoomIn {
+            from {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
 
         /* 响应式设计 */
         @media (max-width: 768px) {
+            .photo-carousel {
+                width: 250px;
+                height: 350px;
+            }
+            
+            .photo-item {
+                width: 230px;
+                height: 330px;
+                margin-left: -115px;
+                margin-top: -165px;
+            }
+            
+            .gallery-title {
+                font-size: 2rem;
+                top: 8%;
+            }
+            
+            .gallery-hint {
+                font-size: 1.1rem;
+            }
             .beating-heart {
                 width: 60vmin;
                 height: 60vmin;
@@ -833,9 +1014,25 @@
                 <button class="control-btn" id="snowBtn">❄️ 下雪</button>
                 <button class="control-btn" id="lightsBtn">✨ 灯光</button>
                 <button class="control-btn" id="decorateBtn">🎀 装饰</button>
+                <button class="control-btn" id="galleryBtn">🖼️ 照片墙</button>
                 <button class="control-btn" id="resetBtn">🔄 重置</button>
             </div>
         </div>
+        
+        <!-- 3D旋转照片墙 -->
+        <div class="photo-gallery" id="photoGallery">
+            <h2 class="gallery-title">我们的美好回忆 💕</h2>
+            <div class="photo-carousel" id="photoCarousel">
+                <!-- 照片将通过 JavaScript 动态添加 -->
+            </div>
+            <p class="gallery-hint">点击照片放大查看 ✨</p>
+        </div>
+    </div>
+    
+    <!-- 照片放大览 -->
+    <div class="photo-overlay" id="photoOverlay">
+        <div class="photo-close" id="photoClose">×</div>
+        <img id="overlayImage" src="" alt="">
     </div>
 
     <script>
@@ -849,12 +1046,18 @@
             const christmasTree = document.getElementById('christmasTree');
             const loveSidebar = document.getElementById('loveSidebar');
             const loveToggle = document.getElementById('loveToggle');
+            const photoGallery = document.getElementById('photoGallery');
+            const photoCarousel = document.getElementById('photoCarousel');
+            const photoOverlay = document.getElementById('photoOverlay');
+            const photoClose = document.getElementById('photoClose');
+            const overlayImage = document.getElementById('overlayImage');
             
             // 按钮
             const musicBtn = document.getElementById('musicBtn');
             const snowBtn = document.getElementById('snowBtn');
             const lightsBtn = document.getElementById('lightsBtn');
             const decorateBtn = document.getElementById('decorateBtn');
+            const galleryBtn = document.getElementById('galleryBtn');
             const resetBtn = document.getElementById('resetBtn');
             
             let isSceneActive = false;
@@ -867,6 +1070,18 @@
             let musicIntervalId = null;
             let ornaments = [];
             let decorations = [];
+            
+            // 照片数据（本地照片）
+            const photos = [
+                'img/1.jpg',
+                'img/2.jpg',
+                'img/3.jpg',
+                'img/4.jpg',
+                'img/5.jpg',
+                'img/6.jpg',
+                'img/7.jpg',
+                'img/8.jpg'
+            ];
             
             // 创建背景装饰
             function createBackgroundDecorations() {
@@ -1337,6 +1552,7 @@
                 
                 // 重置场景
                 scene.classList.remove('scene-active');
+                scene.classList.remove('gallery-active');
                 isSceneActive = false;
                 isLightsOn = false;
                 isLoveActive = false;
@@ -1362,6 +1578,56 @@
             
             // 初始化
             createBackgroundDecorations();
+            initPhotoGallery();
+            
+            // 照片墙初始化
+            function initPhotoGallery() {
+                const photoCount = photos.length;
+                const angleStep = 360 / photoCount;
+                const radius = 400;
+                
+                photos.forEach((photoUrl, index) => {
+                    const photoItem = document.createElement('div');
+                    photoItem.className = 'photo-item';
+                    
+                    const img = document.createElement('img');
+                    img.src = photoUrl;
+                    img.alt = `照片 ${index + 1}`;
+                    
+                    const angle = angleStep * index;
+                    const rotateY = `rotateY(${angle}deg)`;
+                    const translateZ = `translateZ(${radius}px)`;
+                    
+                    photoItem.style.transform = `${rotateY} ${translateZ}`;
+                    photoItem.appendChild(img);
+                    
+                    photoItem.addEventListener('click', function() {
+                        overlayImage.src = photoUrl;
+                        photoOverlay.classList.add('active');
+                        photoCarousel.classList.add('paused');
+                    });
+                    
+                    photoCarousel.appendChild(photoItem);
+                });
+            }
+            
+            // 照片放大关闭
+            photoClose.addEventListener('click', function() {
+                photoOverlay.classList.remove('active');
+                photoCarousel.classList.remove('paused');
+            });
+            
+            photoOverlay.addEventListener('click', function(e) {
+                if (e.target === photoOverlay) {
+                    photoOverlay.classList.remove('active');
+                    photoCarousel.classList.remove('paused');
+                }
+            });
+            
+            // 照片墙按钮
+            galleryBtn.addEventListener('click', function() {
+                scene.classList.add('gallery-active');
+            });
             
             // 自动展开表白侧边栏
             setTimeout(() => {
