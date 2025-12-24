@@ -354,15 +354,19 @@
         /* 圣诞树容器 */
         .tree-container {
             position: absolute;
-            bottom: 5vh;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 60vw;
-            height: 80vh;
+            transform: translate(-50%, -50%);
+            width: 90vmin;
+            max-width: 800px;
+            height: 90vmin;
+            max-height: 600px;
             z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            pointer-events: none;
         }
 
         /* 圣诞树 */
@@ -373,6 +377,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start;
             filter: drop-shadow(0 0 30px rgba(0, 255, 0, 0.4));
         }
 
@@ -385,50 +390,59 @@
             border-color: transparent transparent;
             animation: treeGlow 4s ease-in-out infinite alternate;
             will-change: filter;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
         .layer-1 {
-            top: 60%;
+            top: 70%;
             border-width: 0 20vmin 25vmin 20vmin;
             border-bottom-color: #0da20d;
             filter: brightness(1.1);
+            z-index: 1;
         }
 
         .layer-2 {
-            top: 45%;
+            top: 50%;
             border-width: 0 30vmin 35vmin 30vmin;
             border-bottom-color: #0ba30b;
             filter: brightness(1);
+            z-index: 2;
         }
 
         .layer-3 {
-            top: 30%;
+            top: 28%;
             border-width: 0 40vmin 45vmin 40vmin;
             border-bottom-color: #0a8c0a;
             filter: brightness(0.9);
+            z-index: 3;
         }
 
-        /* 树干 */
+        /* 树干 - 紧贴layer-1底部 */
         .tree-trunk {
             position: absolute;
-            bottom: 0;
+            top: calc(70% + 24.5vmin);
+            left: 50%;
+            transform: translateX(-50%);
             width: 8vmin;
-            height: 20vmin;
+            height: 10vmin;
             background: linear-gradient(to right, 
                 #8B4513 0%, 
                 #A0522D 30%, 
                 #8B4513 70%, 
                 #654321 100%);
-            border-radius: 3vmin 3vmin 0 0;
+            border-radius: 2vmin 2vmin 0 0;
             box-shadow: 
                 0 0 20px rgba(139, 69, 19, 0.6),
                 inset 0 5px 10px rgba(0, 0, 0, 0.3);
+            z-index: 0;
         }
 
-        /* 树顶星星 */
         .tree-star {
             position: absolute;
-            top: 15%;
+            top: 22%;
+            left: 50%;
+            transform: translateX(-50%);
             width: 10vmin;
             height: 10vmin;
             background: linear-gradient(45deg, 
@@ -465,6 +479,7 @@
             box-shadow: 0 0 10px currentColor;
             animation: ornamentFloat 4s ease-in-out infinite;
             will-change: transform;
+            pointer-events: all;
         }
 
         .ornament:hover {
@@ -474,40 +489,43 @@
 
         /* 控制面板 */
         .controls {
-            position: absolute;
-            bottom: 6vh;
+            position: fixed;
+            bottom: 3vh;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 20px;
+            gap: 12px;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(10px);
-            padding: 20px 35px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 12px 20px;
             border-radius: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            max-width: fit-content;
         }
 
         .control-btn {
-            padding: 15px 25px;
+            padding: 10px 18px;
             background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, 0.05) 100%);
+                rgba(255, 255, 255, 0.15) 0%,
+                rgba(255, 255, 255, 0.08) 100%);
             border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50px;
+            border-radius: 25px;
             color: white;
-            font-size: 1.3rem;
+            font-size: 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
-            min-width: 120px;
+            white-space: nowrap;
         }
 
         .control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.25) 0%,
+                rgba(255, 255, 255, 0.15) 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
         }
 
         /* 雪花 */
@@ -899,15 +917,12 @@
             }
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
-            /* 修复移动端爱心显示割裂问题 */
-            .beating-heart {
-                width: 60vmin;
-                height: 60vmin;
-                position: relative;
-                overflow: visible; /* 确保爱心元素不会被裁剪 */
-                margin: 20px auto; /* 添加外边距确保完全显示 */
+            /* 移动端保持一致的显示效果 */
+            .tree-container {
+                width: 90vmin;
+                height: 90vmin;
+                top: 50%;
             }
             
             .beating-heart:before,
@@ -1012,10 +1027,12 @@
                 transform: translate(-50%, -50%);
             }
             
-            .photo-carousel {
-                width: 250px;
-                height: 350px;
-                animation: rotate3D 80s linear infinite;
+            .beating-heart {
+                width: 60vmin;
+                height: 60vmin;
+                position: relative;
+                overflow: visible;
+                margin: 20px auto;
             }
             .photo-item {
                 width: 230px;
@@ -1040,8 +1057,9 @@
             }
             
             .tree-container {
-                width: 80vw;
-                height: 70vh;
+                width: 85vw;
+                height: 75vh;
+                bottom: 11vh;
             }
             
             .layer-1 {
@@ -1057,7 +1075,8 @@
             }
             
             .tree-trunk {
-                width: 6vmin;
+                width: 8vmin;
+                height: 20vmin;
             }
             
             .love-sidebar {
@@ -1078,17 +1097,14 @@
             }
             
             .controls {
-                flex-wrap: wrap;
-                justify-content: center;
-                width: 90%;
-                padding: 15px 20px;
-                gap: 10px;
+                bottom: 2vh;
+                gap: 8px;
+                padding: 10px 15px;
             }
             
             .control-btn {
-                padding: 12px 20px;
-                font-size: 1.1rem;
-                min-width: 100px;
+                padding: 8px 14px;
+                font-size: 0.9rem;
             }
     </style>
 </head>
@@ -1403,16 +1419,7 @@
             });
             
             // 表白侧边栏控制
-            loveToggle.addEventListener('click', function() {
-                isLoveActive = !isLoveActive;
-                if (isLoveActive) {
-                    loveSidebar.classList.add('active');
-                    this.textContent = '💖';
-                } else {
-                    loveSidebar.classList.remove('active');
-                    this.textContent = '💌';
-                }
-            });
+            // 已移到上面的点击事件中
             
             // 添加圣诞树装饰
             function addTreeOrnaments() {
@@ -1774,6 +1781,12 @@
             // 照片墙按钮
             galleryBtn.addEventListener('click', function() {
                 scene.classList.add('gallery-active');
+                // 打开照片墙时关闭信件
+                if (isLoveActive) {
+                    isLoveActive = false;
+                    loveSidebar.classList.remove('active');
+                    loveToggle.textContent = '💌';
+                }
             });
             
             // 返回爱心按钮
@@ -1798,27 +1811,66 @@
                 instruction.textContent = '点击爱心，向呆呆表白 ❤️';
             });
             
-            // 自动展开表白侧边栏
-            setTimeout(() => {
-                if (isSceneActive && !isLoveActive) {
-                    isLoveActive = true;
+            // 自动展开表白侧边栏（手动打开后5秒提示照片墙）
+            let galleryHintTimeout = null;
+            loveToggle.addEventListener('click', function() {
+                isLoveActive = !isLoveActive;
+                if (isLoveActive) {
                     loveSidebar.classList.add('active');
-                    loveToggle.textContent = '💖';
+                    this.textContent = '💖';
+                    
+                    // 5秒后提示是否打开照片墙
+                    galleryHintTimeout = setTimeout(() => {
+                        if (isLoveActive && isSceneActive && !scene.classList.contains('gallery-active')) {
+                            // 创建一个提示
+                            const hint = document.createElement('div');
+                            hint.style.cssText = `
+                                position: fixed;
+                                bottom: 20vh;
+                                left: 50%;
+                                transform: translateX(-50%);
+                                background: rgba(255, 0, 102, 0.9);
+                                color: white;
+                                padding: 20px 40px;
+                                border-radius: 50px;
+                                font-size: 1.5rem;
+                                z-index: 2000;
+                                box-shadow: 0 10px 40px rgba(255, 0, 102, 0.5);
+                                cursor: pointer;
+                                animation: textPulse 2s ease-in-out infinite;
+                                backdrop-filter: blur(10px);
+                            `;
+                            hint.textContent = '🖼️ 点击查看我们的美好回忆';
+                            hint.addEventListener('click', function() {
+                                scene.classList.add('gallery-active');
+                                hint.remove();
+                                // 打开照片墙时关闭信件
+                                if (isLoveActive) {
+                                    isLoveActive = false;
+                                    loveSidebar.classList.remove('active');
+                                    loveToggle.textContent = '💌';
+                                }
+                            });
+                            document.body.appendChild(hint);
+                            
+                            // 10秒后自动消失
+                            setTimeout(() => hint.remove(), 10000);
+                        }
+                    }, 5000);
+                } else {
+                    loveSidebar.classList.remove('active');
+                    this.textContent = '💌';
+                    if (galleryHintTimeout) {
+                        clearTimeout(galleryHintTimeout);
+                    }
                 }
-            }, 2000);
+            });
             
-            // 进入圣诞树后5秒自动展示照片墙
+            // 进入圣诞树后显示返回爱心按钮
             setTimeout(() => {
                 if (isSceneActive) {
                     // 显示返回爱心按钮
                     backToHeartBtn.style.display = 'block';
-                    
-                    // 5秒后自动切换到照片墙
-                    setTimeout(() => {
-                        if (isSceneActive && !scene.classList.contains('gallery-active')) {
-                            scene.classList.add('gallery-active');
-                        }
-                    }, 5000);
                 }
             }, 2000);
         });
