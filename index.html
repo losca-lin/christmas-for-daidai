@@ -79,6 +79,8 @@
                 0 0 120px rgba(255, 26, 109, 0.7),
                 0 0 180px rgba(255, 26, 109, 0.5),
                 inset 0 0 40px rgba(255, 255, 255, 0.4);
+            /* 修复移动端显示问题 */
+            transform-origin: center;
         }
 
         .beating-heart:before {
@@ -736,7 +738,7 @@
             width: 300px;
             height: 400px;
             transform-style: preserve-3d;
-            animation: rotate3D 30s linear infinite;
+            animation: rotate3D 60s linear infinite; /* 放慢旋转速度 */
         }
         
         .photo-carousel.paused {
@@ -784,10 +786,36 @@
             justify-content: center;
             z-index: 2000;
             backdrop-filter: blur(10px);
+            cursor: pointer; /* 点击空白处退出 */
         }
         
         .photo-overlay.active {
             display: flex;
+        }
+        
+        /* 返回爱心按钮 */
+        .back-to-heart {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            display: none; /* 默认隐藏 */
+        }
+        
+        .back-to-heart:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1) rotate(15deg);
         }
         
         .photo-overlay img {
@@ -867,9 +895,35 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
+            /* 修复移动端爱心显示割裂问题 */
+            .beating-heart {
+                width: 60vmin;
+                height: 60vmin;
+                position: relative;
+                overflow: visible; /* 确保爱心元素不会被裁剪 */
+                margin: 20px auto; /* 添加外边距确保完全显示 */
+            }
+            
+            .beating-heart:before,
+            .beating-heart:after {
+                width: 30vmin;
+                height: 48vmin;
+                /* 确保在移动设备上爱心显示完整 */
+                border-radius: 22vmin 22vmin 0 0;
+                position: absolute;
+                transform-origin: center;
+                overflow: visible;
+                /* 确保阴影也完全显示 */
+                box-shadow: 
+                    0 0 40px rgba(255, 26, 109, 0.9),
+                    0 0 80px rgba(255, 26, 109, 0.7),
+                    0 0 120px rgba(255, 26, 109, 0.5),
+                    inset 0 0 30px rgba(255, 255, 255, 0.4);
+            }
             .photo-carousel {
                 width: 250px;
                 height: 350px;
+                animation: rotate3D 80s linear infinite; /* 在移动设备上更慢的旋转速度 */
             }
             
             .photo-item {
@@ -887,15 +941,11 @@
             .gallery-hint {
                 font-size: 1.1rem;
             }
-            .beating-heart {
-                width: 60vmin;
-                height: 60vmin;
-            }
             
-            .beating-heart:before,
-            .beating-heart:after {
-                width: 30vmin;
-                height: 48vmin;
+            /* 移动端照片墙优化 */
+            .photo-item {
+                /* 确保照片在移动端也正确显示 */
+                transform-style: preserve-3d;
             }
             
             .instruction {
@@ -1034,6 +1084,9 @@
         <div class="photo-close" id="photoClose">×</div>
         <img id="overlayImage" src="" alt="">
     </div>
+    
+    <!-- 返回爱心按钮 -->
+    <button class="back-to-heart" id="backToHeart">❤️</button>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -1618,6 +1671,7 @@
             });
             
             photoOverlay.addEventListener('click', function(e) {
+                // 点击图片本身不关闭，只点击背景才关闭
                 if (e.target === photoOverlay) {
                     photoOverlay.classList.remove('active');
                     photoCarousel.classList.remove('paused');
@@ -1629,12 +1683,49 @@
                 scene.classList.add('gallery-active');
             });
             
+            // 返回爱心按钮
+            const backToHeartBtn = document.getElementById('backToHeart');
+            backToHeartBtn.addEventListener('click', function() {
+                // 重置场景到初始状态
+                scene.classList.remove('scene-active');
+                scene.classList.remove('gallery-active');
+                isSceneActive = false;
+                isLoveActive = false;
+                
+                // 隐藏表白按钮
+                loveToggle.classList.remove('visible');
+                loveSidebar.classList.remove('active');
+                loveToggle.textContent = '💌';
+                
+                // 重置灯光按钮状态
+                lightsBtn.textContent = '✨ 灯光';
+                
+                // 显示爱心界面
+                instruction.style.opacity = '1';
+                instruction.textContent = '点击爱心，向呆呆表白 ❤️';
+            });
+            
             // 自动展开表白侧边栏
             setTimeout(() => {
                 if (isSceneActive && !isLoveActive) {
                     isLoveActive = true;
                     loveSidebar.classList.add('active');
                     loveToggle.textContent = '💖';
+                }
+            }, 2000);
+            
+            // 进入圣诞树后5秒自动展示照片墙
+            setTimeout(() => {
+                if (isSceneActive) {
+                    // 显示返回爱心按钮
+                    backToHeartBtn.style.display = 'block';
+                    
+                    // 5秒后自动切换到照片墙
+                    setTimeout(() => {
+                        if (isSceneActive && !scene.classList.contains('gallery-active')) {
+                            scene.classList.add('gallery-active');
+                        }
+                    }, 5000);
                 }
             }, 2000);
         });
