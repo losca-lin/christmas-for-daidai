@@ -16,8 +16,7 @@
             background: linear-gradient(135deg, #1a0a2a 0%, #2a0a3a 30%, #1a2a3a 70%, #001a2a 100%);
             color: white;
             min-height: 100vh;
-            overflow-x: hidden;
-            overflow-y: auto;
+            overflow: hidden;
             position: relative;
         }
 
@@ -25,8 +24,8 @@
         .scene {
             position: relative;
             width: 100vw;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            overflow: hidden;
         }
 
         /* 全屏爱心部分 */
@@ -185,16 +184,18 @@
             right: 0;
             transform: translateY(-50%) translateX(100%);
             width: 380px;
-            height: auto;
+            max-height: 80vh;
             background: rgba(0, 0, 0, 0.9);
             backdrop-filter: blur(20px);
             border-radius: 20px 0 0 20px;
             border: 2px solid rgba(255, 255, 255, 0.2);
             border-right: none;
             box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
-            z-index: 50;
+            z-index: 999;
             transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
             padding: 30px;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .love-sidebar.active {
@@ -202,8 +203,8 @@
         }
 
         .love-toggle {
-            position: absolute;
-            left: -60px;
+            position: fixed;
+            right: 0;
             top: 50%;
             transform: translateY(-50%);
             width: 60px;
@@ -219,7 +220,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.3s ease;
-            z-index: 51;
+            z-index: 1000;
         }
 
         .love-toggle:hover {
@@ -693,6 +694,7 @@
             
             .love-sidebar {
                 width: 280px;
+                max-height: 70vh;
             }
             
             .love-title {
@@ -731,8 +733,8 @@
         </div>
 
         <!-- 表白祝福语侧边栏 -->
+        <div class="love-toggle" id="loveToggle">💌</div>
         <div class="love-sidebar" id="loveSidebar">
-            <div class="love-toggle" id="loveToggle">💌</div>
             <div class="love-content">
                 <h1 class="love-title">给<span class="special-name">呆呆</span>的<br>圣诞告白</h1>
                 <div class="love-message">亲爱的呆呆，这个圣诞节，我想告诉你：遇见你是我生命中最美的奇迹</div>
