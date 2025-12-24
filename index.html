@@ -59,6 +59,7 @@
                 heartBeat 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite,
                 heartFloat 6s ease-in-out infinite;
             filter: drop-shadow(0 0 50px rgba(255, 51, 102, 0.8));
+            will-change: transform;
         }
 
         .beating-heart:before,
@@ -75,12 +76,12 @@
                 #ffb3d9 100%);
             border-radius: 30vmin 30vmin 0 0;
             box-shadow: 
-                0 0 60px rgba(255, 26, 109, 0.9),
-                0 0 120px rgba(255, 26, 109, 0.7),
-                0 0 180px rgba(255, 26, 109, 0.5),
-                inset 0 0 40px rgba(255, 255, 255, 0.4);
+                0 0 40px rgba(255, 26, 109, 0.8),
+                0 0 80px rgba(255, 26, 109, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
             /* 修复移动端显示问题 */
             transform-origin: center;
+            will-change: transform;
         }
 
         .beating-heart:before {
@@ -109,8 +110,9 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 2;
-            filter: blur(10px);
+            filter: blur(8px);
             animation: heartPulse 2s ease-in-out infinite alternate;
+            will-change: transform, opacity;
         }
 
         /* 爱心光环 */
@@ -382,6 +384,7 @@
             border-style: solid;
             border-color: transparent transparent;
             animation: treeGlow 4s ease-in-out infinite alternate;
+            will-change: filter;
         }
 
         .layer-1 {
@@ -441,7 +444,8 @@
                 starGlow 2s ease-in-out infinite alternate,
                 starFloat 5s ease-in-out infinite;
             z-index: 11;
-            filter: drop-shadow(0 0 20px gold);
+            filter: drop-shadow(0 0 15px gold);
+            will-change: transform, filter;
         }
 
         /* 装饰球 */
@@ -451,15 +455,16 @@
             height: 4vmin;
             border-radius: 50%;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
             z-index: 12;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 2vmin;
             text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 15px currentColor;
+            box-shadow: 0 0 10px currentColor;
             animation: ornamentFloat 4s ease-in-out infinite;
+            will-change: transform;
         }
 
         .ornament:hover {
@@ -522,6 +527,7 @@
             border-radius: 50%;
             opacity: 0.7;
             filter: blur(0.5px);
+            will-change: transform;
         }
 
         /* 背景装饰 */
@@ -920,6 +926,92 @@
                     0 0 120px rgba(255, 26, 109, 0.5),
                     inset 0 0 30px rgba(255, 255, 255, 0.4);
             }
+            
+            /* 修复移动端爱心变形问题 */
+            .beating-heart-container {
+                width: 100vmin;
+                height: 100vmin;
+            }
+            
+            .beating-heart {
+                width: 60vmin;
+                height: 60vmin;
+                animation: 
+                    heartBeat 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite,
+                    heartFloat 6s ease-in-out infinite;
+            }
+            
+            .beating-heart:before {
+                left: 30vmin;
+                transform: rotate(-45deg);
+                transform-origin: 0 100%;
+            }
+            
+            .beating-heart:after {
+                left: 0;
+                transform: rotate(45deg);
+                transform-origin: 100% 100%;
+            }
+            
+            /* 修复超小屏设备的爱心显示 */
+            .heart-center {
+                width: 18vmin;
+                height: 18vmin;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+        
+        /* 针对极小屏幕的额外适配 */
+        @media (max-width: 480px) {
+            .beating-heart-container {
+                width: 100vmin;
+                height: 100vmin;
+            }
+            
+            .beating-heart {
+                width: 70vmin;
+                height: 70vmin;
+            }
+            
+            .beating-heart:before,
+            .beating-heart:after {
+                width: 35vmin;
+                height: 56vmin;
+                /* 确保在移动设备上爱心显示完整 */
+                border-radius: 26vmin 26vmin 0 0;
+                position: absolute;
+                transform-origin: center;
+                overflow: visible;
+                /* 确保阴影也完全显示 */
+                box-shadow: 
+                    0 0 40px rgba(255, 26, 109, 0.9),
+                    0 0 80px rgba(255, 26, 109, 0.7),
+                    0 0 120px rgba(255, 26, 109, 0.5),
+                    inset 0 0 30px rgba(255, 255, 255, 0.4);
+            }
+            
+            .beating-heart:before {
+                left: 35vmin;
+                transform: rotate(-45deg);
+                transform-origin: 0 100%;
+            }
+            
+            .beating-heart:after {
+                left: 0;
+                transform: rotate(45deg);
+                transform-origin: 100% 100%;
+            }
+            
+            .heart-center {
+                width: 22vmin;
+                height: 22vmin;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
             .photo-carousel {
                 width: 250px;
                 height: 350px;
@@ -1141,7 +1233,7 @@
                 const decorTypes = ['❤️', '💌', '🎄', '🎁', '🌟', '🔔', '🦌', '⛄', '🍪', '🥛', '✨', '❄️'];
                 const colors = ['#ff0066', '#00ccff', '#ffcc00', '#ff99ff', '#cc66ff'];
                 
-                for (let i = 0; i < 20; i++) {
+                for (let i = 0; i < 12; i++) {
                     const decoration = document.createElement('div');
                     decoration.className = 'bg-ornament';
                     decoration.textContent = decorTypes[Math.floor(Math.random() * decorTypes.length)];
@@ -1381,7 +1473,7 @@
             function addTreeLights() {
                 const lightColors = ['#ff0066', '#00ccff', '#ff99ff', '#ffcc00', '#cc66ff', '#ffffff'];
                 
-                for (let i = 0; i < 25; i++) {
+                for (let i = 0; i < 18; i++) {
                     setTimeout(() => {
                         const light = document.createElement('div');
                         light.className = 'ornament';
@@ -1411,7 +1503,7 @@
                 const centerX = rect.left + rect.width / 2;
                 const centerY = rect.top + rect.height / 2;
                 
-                for (let i = 0; i < 25; i++) {
+                for (let i = 0; i < 15; i++) {
                     const sparkle = document.createElement('div');
                     sparkle.style.position = 'fixed';
                     sparkle.style.width = '8px';
@@ -1476,12 +1568,12 @@
                     isSnowing = true;
                     snowBtn.textContent = '❄️ 停止';
                     createSnowflakes();
-                    snowInterval = setInterval(createSnowflakes, 250);
+                    snowInterval = setInterval(createSnowflakes, 400);
                 }
             }
             
             function createSnowflakes() {
-                for (let i = 0; i < 3; i++) {
+                for (let i = 0; i < 2; i++) {
                     const snowflake = document.createElement('div');
                     snowflake.className = 'snowflake';
                     
