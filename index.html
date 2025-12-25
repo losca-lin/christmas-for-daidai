@@ -977,7 +977,7 @@
         /* 照片墙速度控制台 */
         .gallery-speed-control {
             position: absolute;
-            bottom: 15%;
+            top: 18%;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
@@ -992,6 +992,9 @@
             z-index: 15;
             opacity: 0;
             transition: opacity 0.5s ease 0.5s;
+            max-width: 90vw;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         
         .gallery-active .gallery-speed-control {
@@ -1031,6 +1034,46 @@
             background: linear-gradient(135deg, #ff0066 0%, #ff3385 100%);
             border-color: rgba(255, 255, 255, 0.5);
             box-shadow: 0 0 20px rgba(255, 0, 102, 0.5);
+        }
+        
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .gallery-speed-control {
+                top: 16%;
+                padding: 12px 20px;
+                gap: 10px;
+                max-width: 95vw;
+            }
+            
+            .speed-label {
+                font-size: 0.9rem;
+                flex-basis: 100%;
+                text-align: center;
+            }
+            
+            .speed-btn {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+                flex: 1;
+                min-width: fit-content;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .gallery-speed-control {
+                top: 14%;
+                padding: 10px 15px;
+                gap: 8px;
+            }
+            
+            .speed-label {
+                font-size: 0.85rem;
+            }
+            
+            .speed-btn {
+                padding: 8px 14px;
+                font-size: 0.8rem;
+            }
         }
         
         .gallery-hint {
