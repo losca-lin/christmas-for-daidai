@@ -351,209 +351,134 @@
             animation: messageAppear 0.5s ease 1.2s forwards;
         }
 
-        /* 圣诞树容器 - 完全重新设计 */
+        /* 圣诞树容器 - SVG方式 */
         .tree-container {
             position: absolute;
-            top: 50%;
+            top: 35%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px; /* 固定宽度，避免PC端过小 */
-            height: 400px;
+            width: 400px;
+            height: 500px;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
             pointer-events: none;
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.5));
         }
 
-        /* 圣诞树主体 - 使用flex布局确保完整性 */
+        /* 圣诞树SVG */
         .christmas-tree {
             position: relative;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
         }
 
-        /* 树层 - 改用绝对定位确保正确层叠 */
-        .tree-layer {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            border-style: solid;
-            border-color: transparent transparent;
-            animation: treeGlow 4s ease-in-out infinite alternate;
+        .christmas-tree svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 20px rgba(0, 150, 0, 0.4));
         }
 
-        /* 具体树层尺寸 - 修正PC端显示 */
-        .layer-1 {
-            top: 40px; /* 从上往下定位 */
-            border-width: 0 60px 100px 60px;
-            border-bottom-color: #0da20d;
-            z-index: 3;
-            filter: brightness(1.1);
+        /* 树木纹理动画 */
+        .tree-foliage {
+            animation: treeGlowPulse 4s ease-in-out infinite alternate;
         }
 
-        .layer-2 {
-            top: 120px;
-            border-width: 0 100px 140px 100px;
-            border-bottom-color: #0ba30b;
-            z-index: 2;
-            filter: brightness(1);
-        }
-
-        .layer-3 {
-            top: 200px;
-            border-width: 0 140px 180px 140px;
-            border-bottom-color: #0a8c0a;
-            z-index: 1;
-            filter: brightness(0.9);
-        }
-
-        .layer-4 {
-            top: 280px;
-            border-width: 0 180px 220px 180px;
-            border-bottom-color: #0a8c0a;
-            z-index: 1;
-            filter: brightness(0.9);
-        }
-
-        .layer-5 {
-            top: 360px;
-            border-width: 0 220px 260px 220px;
-            border-bottom-color: #0a8c0a;
-            z-index: 1;
-            filter: brightness(0.9);
-        }
-
-        /* 树干 - 确保在PC端显示 */
-        .tree-trunk {
-            position: absolute;
-            top: calc(70% + 24vmin);
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8vmin;
-            height: 8vmin;
-            background: linear-gradient(to right,
-            #8B4513 0%,
-            #A0522D 30%,
-            #8B4513 70%,
-            #654321 100%);
-            border-radius: 2vmin 2vmin 0 0;
-            box-shadow:
-                    0 0 20px rgba(139, 69, 19, 0.8),
-                    inset 0 5px 10px rgba(0, 0, 0, 0.3);
-            z-index: 4;
-            display: block !important;
+        @keyframes treeGlowPulse {
+            0% { filter: brightness(1) drop-shadow(0 0 10px rgba(0, 200, 0, 0.3)); }
+            100% { filter: brightness(1.15) drop-shadow(0 0 25px rgba(0, 255, 0, 0.6)); }
         }
 
         /* 树顶星星 */
         .tree-star {
             position: absolute;
-            top: -5vmin;
+            top: -5%;
             left: 50%;
             transform: translateX(-50%);
-            width: 12vmin;
-            height: 12vmin;
-            background: linear-gradient(45deg,
-            gold 0%,
-            #ffcc00 50%,
-            gold 100%);
-            clip-path: polygon(
-                    50% 0%, 61% 35%, 98% 35%, 68% 57%,
-                    79% 91%, 50% 70%, 21% 91%, 32% 57%,
-                    2% 35%, 39% 35%
-            );
-            animation:
-                    starGlow 2s ease-in-out infinite alternate,
-                    starFloat 5s ease-in-out infinite;
-            z-index: 4;
-            filter: drop-shadow(0 0 15px gold);
+            width: 80px;
+            height: 80px;
+            z-index: 20;
+            animation: starRotate 8s linear infinite;
+            filter: drop-shadow(0 0 15px gold) drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
         }
 
-        /* 装饰球位置调整 */
+        .tree-star svg {
+            width: 100%;
+            height: 100%;
+            animation: starPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes starRotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        @keyframes starPulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.4); }
+        }
+
+        /* 装饰球 */
         .ornament {
             position: absolute;
-            width: 5vmin;
-            height: 5vmin;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             cursor: pointer;
-            transition: transform 0.3s ease;
-            z-index: 5;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 15;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.5vmin;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
-            box-shadow: 0 0 10px currentColor;
-            animation: ornamentFloat 4s ease-in-out infinite;
+            font-size: 15px;
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+            box-shadow: 
+                0 5px 20px currentColor,
+                inset -2px -2px 6px rgba(0, 0, 0, 0.4),
+                inset 2px 2px 6px rgba(255, 255, 255, 0.3);
+            animation: ornamentFloat 5s ease-in-out infinite;
             pointer-events: all;
+            background: radial-gradient(circle at 35% 35%, 
+                rgba(255, 255, 255, 0.5) 0%, 
+                rgba(255, 255, 255, 0.1) 40%,
+                transparent 70%);
         }
 
         /* 移动端适配 */
         @media (max-width: 768px) {
             .tree-container {
-                width: 70vmin;
-                height: 85vmin;
-                top: 45%; /* 在移动端稍微上移 */
-            }
-
-            .layer-1 {
-                border-width: 0 20vmin 25vmin 20vmin;
-            }
-
-            .layer-2 {
-                border-width: 0 30vmin 35vmin 30vmin;
-            }
-
-            .layer-3 {
-                border-width: 0 40vmin 45vmin 40vmin;
-            }
-
-            .tree-trunk {
-                width: 8vmin;
-                height: 10vmin;
+                width: 320px;
+                height: 420px;
+                top: 32%;
             }
 
             .tree-star {
-                width: 10vmin;
-                height: 10vmin;
-                top: -4vmin;
+                width: 60px;
+                height: 60px;
             }
 
             .ornament {
-                width: 4vmin;
-                height: 4vmin;
-                font-size: 2vmin;
+                width: 24px;
+                height: 24px;
+                font-size: 13px;
             }
         }
 
         /* 超小屏幕适配 */
         @media (max-width: 480px) {
             .tree-container {
-                width: 80vmin;
-                height: 90vmin;
-                top: 40%;
+                width: 280px;
+                height: 380px;
+                top: 30%;
             }
 
-            .layer-1 {
-                border-width: 0 18vmin 22vmin 18vmin;
+            .tree-star {
+                width: 55px;
+                height: 55px;
             }
 
-            .layer-2 {
-                border-width: 0 28vmin 32vmin 28vmin;
-            }
-
-            .layer-3 {
-                border-width: 0 38vmin 42vmin 38vmin;
-            }
-
-            .tree-trunk {
-                width: 7vmin;
-                height: 10vmin;
+            .ornament {
+                width: 22px;
+                height: 22px;
+                font-size: 12px;
             }
         }
 
@@ -562,7 +487,7 @@
             box-shadow: 0 0 30px white;
         }
 
-        /* 控制面板 */
+        /* 控制面板 - 自适应宽度优化 */
         .controls {
             position: fixed;
             bottom: 3vh;
@@ -571,32 +496,35 @@
             display: flex;
             gap: 12px;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(15px);
-            padding: 12px 20px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            padding: 14px 24px;
             border-radius: 50px;
             border: 2px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            max-width: fit-content;
+            box-shadow: 
+                0 10px 40px rgba(0, 0, 0, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            max-width: 90vw;
+            width: auto;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .control-btn {
-            padding: 10px 18px;
+            padding: 11px 20px;
             background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.15) 0%,
-                rgba(255, 255, 255, 0.08) 100%);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 25px;
+                rgba(255, 255, 255, 0.18) 0%,
+                rgba(255, 255, 255, 0.1) 100%);
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-radius: 30px;
             color: white;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(5px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(8px);
             white-space: nowrap;
-            overflow-x: auto; /* 允许水平滚动 */
-            overflow-y: hidden;
-            -webkit-overflow-scrolling: touch; /* 移动端平滑滚动 */
-            scrollbar-width: none; /* 隐藏滚动条 */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            min-width: fit-content;
         }
 
         .control-btn:hover {
@@ -746,10 +674,10 @@
 
         @keyframes treeGlow {
             0% { 
-                filter: drop-shadow(0 0 20px rgba(0, 255, 0, 0.3)) brightness(1);
+                filter: drop-shadow(0 0 15px rgba(0, 200, 0, 0.4)) brightness(1);
             }
             100% { 
-                filter: drop-shadow(0 0 40px rgba(0, 255, 0, 0.6)) brightness(1.1);
+                filter: drop-shadow(0 0 30px rgba(0, 255, 0, 0.7)) brightness(1.2);
             }
         }
 
@@ -1228,16 +1156,86 @@
 
         <!-- 圣诞场景 -->
         <div class="christmas-scene" id="christmasScene">
-            <!-- 圣诞树 -->
+            <!-- 圣诞树 - 全新SVG实现 -->
             <div class="tree-container">
+                <div class="tree-star">
+                    <svg viewBox="0 0 100 100">
+                        <defs>
+                            <radialGradient id="starGradient">
+                                <stop offset="0%" style="stop-color:#fffacd;stop-opacity:1" />
+                                <stop offset="40%" style="stop-color:#ffd700;stop-opacity:1" />
+                                <stop offset="80%" style="stop-color:#ffb700;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#ff9500;stop-opacity:1" />
+                            </radialGradient>
+                        </defs>
+                        <polygon points="50,5 61,35 98,35 68,57 79,91 50,70 21,91 32,57 2,35 39,35" 
+                                 fill="url(#starGradient)" stroke="#ffcc00" stroke-width="2"/>
+                    </svg>
+                </div>
                 <div class="christmas-tree" id="christmasTree">
-                    <div class="tree-star" id="treeStar"></div>
-                    <div class="tree-layer layer-5"></div>
-                    <div class="tree-layer layer-4"></div>
-                    <div class="tree-layer layer-3"></div>
-                    <div class="tree-layer layer-2"></div>
-                    <div class="tree-layer layer-1"></div>
-                    <div class="tree-trunk"></div>
+                    <svg viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <!-- 树木纹理渐变 -->
+                            <linearGradient id="treeGradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2d8a2d;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#1f6b1f;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#155015;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="treeGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#267326;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#1a5f1a;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#124512;stop-opacity:1" />
+                            </linearGradient>
+                            <linearGradient id="treeGradient3" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#1f6b1f;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#155015;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#0d3d0d;stop-opacity:1" />
+                            </linearGradient>
+                            <!-- 树干木纹渐变 -->
+                            <linearGradient id="trunkGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#4a2810;stop-opacity:1" />
+                                <stop offset="15%" style="stop-color:#5c3317;stop-opacity:1" />
+                                <stop offset="30%" style="stop-color:#7a4d2e;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#8b5a3c;stop-opacity:1" />
+                                <stop offset="70%" style="stop-color:#6b4423;stop-opacity:1" />
+                                <stop offset="85%" style="stop-color:#5c3317;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#4a2810;stop-opacity:1" />
+                            </linearGradient>
+                            <!-- 高光效果 -->
+                            <radialGradient id="highlight">
+                                <stop offset="0%" style="stop-color:#ffffff;stop-opacity:0.3" />
+                                <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0" />
+                            </radialGradient>
+                        </defs>
+                        
+                        <!-- 树冠层次 -->
+                        <g class="tree-foliage">
+                            <!-- 底层 -->
+                            <path d="M 200,290 L 90,420 L 310,420 Z" fill="url(#treeGradient3)" opacity="0.95"/>
+                            <path d="M 200,290 L 90,420 L 310,420 Z" fill="url(#highlight)" opacity="0.2"/>
+                            
+                            <!-- 中层 -->
+                            <path d="M 200,180 L 70,330 L 330,330 Z" fill="url(#treeGradient2)" opacity="0.95"/>
+                            <ellipse cx="150" cy="260" rx="30" ry="50" fill="url(#highlight)" opacity="0.15"/>
+                            
+                            <!-- 顶层 -->
+                            <path d="M 200,60 L 100,210 L 300,210 Z" fill="url(#treeGradient1)" opacity="0.95"/>
+                            <ellipse cx="180" cy="120" rx="25" ry="40" fill="url(#highlight)" opacity="0.2"/>
+                        </g>
+                        
+                        <!-- 树干 -->
+                        <g>
+                            <rect x="165" y="420" width="70" height="70" rx="8" fill="url(#trunkGradient)"/>
+                            <!-- 树干阴影 -->
+                            <rect x="165" y="420" width="70" height="70" rx="8" fill="#000000" opacity="0.15"/>
+                            <!-- 木纹纹理 -->
+                            <line x1="175" y1="435" x2="175" y2="465" stroke="#3a1f0a" stroke-width="2" opacity="0.4"/>
+                            <line x1="190" y1="445" x2="190" y2="480" stroke="#3a1f0a" stroke-width="2" opacity="0.3"/>
+                            <line x1="215" y1="430" x2="215" y2="470" stroke="#3a1f0a" stroke-width="2" opacity="0.35"/>
+                            <!-- 高光 -->
+                            <rect x="180" y="425" width="35" height="60" rx="5" fill="url(#highlight)" opacity="0.1"/>
+                        </g>
+                    </svg>
                 </div>
             </div>
 
