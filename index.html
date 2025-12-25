@@ -482,12 +482,39 @@
             }
         }
 
+        /* 圣诞装饰元素 */
+        .christmas-decorations {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 8;
+        }
+        
+        .decoration-item {
+            position: absolute;
+            font-size: 60px;
+            animation: decorFloat 6s ease-in-out infinite;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+            transition: all 0.3s ease;
+        }
+        
+        .decoration-item:hover {
+            transform: scale(1.2) rotate(10deg);
+            filter: drop-shadow(0 8px 25px rgba(0, 0, 0, 0.5));
+        }
+        
+        @keyframes decorFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(-5deg); }
+        }
+
         .ornament:hover {
             transform: scale(1.4) rotate(180deg);
             box-shadow: 0 0 30px white;
         }
-
-        /* 控制面板 - 自适应宽度优化 */
         .controls {
             position: fixed;
             bottom: 3vh;
@@ -833,20 +860,39 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: linear-gradient(135deg, #ff0066 0%, #ff3385 50%, #ff66a3 100%);
+            border: 3px solid rgba(255, 255, 255, 0.4);
             color: white;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             backdrop-filter: blur(10px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            display: none; /* 默认隐藏 */
+            box-shadow: 
+                0 8px 25px rgba(255, 0, 102, 0.4),
+                0 0 40px rgba(255, 0, 102, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+            display: none; /* 默认隐藏，进入圣诞场景后显示 */
+            animation: heartBeatSmall 1.5s ease-in-out infinite;
+        }
+        
+        .back-to-heart.visible {
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .back-to-heart:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.1) rotate(15deg);
+            background: linear-gradient(135deg, #ff3385 0%, #ff66a3 50%, #ff99c2 100%);
+            transform: scale(1.15) rotate(-10deg);
+            box-shadow: 
+                0 12px 35px rgba(255, 0, 102, 0.6),
+                0 0 60px rgba(255, 0, 102, 0.5),
+                inset 0 0 30px rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes heartBeatSmall {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
         
         .photo-overlay img {
@@ -1238,6 +1284,16 @@
                     </svg>
                 </div>
             </div>
+            
+            <!-- 圣诞装饰元素 -->
+            <div class="christmas-decorations">
+                <div class="decoration-item" style="top: 30%; left: 15%; animation-delay: 0s;">🦌</div>
+                <div class="decoration-item" style="top: 45%; left: 80%; animation-delay: 1s;">⛄</div>
+                <div class="decoration-item" style="top: 60%; left: 10%; animation-delay: 2s;">🎅</div>
+                <div class="decoration-item" style="top: 25%; right: 12%; animation-delay: 1.5s;">🔔</div>
+                <div class="decoration-item" style="bottom: 25%; right: 18%; animation-delay: 0.8s;">🎁</div>
+                <div class="decoration-item" style="top: 70%; left: 75%; animation-delay: 2.2s; font-size: 50px;">🍪</div>
+            </div>
 
             <!-- 控制按钮 -->
             <div class="controls">
@@ -1356,6 +1412,11 @@
                 setTimeout(() => {
                     loveToggle.classList.add('visible');
                 }, 1000);
+                
+                // 显示返回爱心按钮
+                setTimeout(() => {
+                    document.getElementById('backToHeart').classList.add('visible');
+                }, 1500);
                 
                 // 播放背景音乐
                 playChristmasMusic();
@@ -1877,6 +1938,9 @@
                 isSceneActive = false;
                 isLoveActive = false;
                 
+                // 隐藏返回爱心按钮
+                backToHeartBtn.classList.remove('visible');
+                
                 // 隐藏表白按钮
                 loveToggle.classList.remove('visible');
                 loveSidebar.classList.remove('active');
@@ -1884,11 +1948,55 @@
                 
                 // 重置灯光按钮状态
                 lightsBtn.textContent = '✨ 灯光';
+                isLightsOn = false;
+                
+                // 停止下雪
+                if (isSnowing) {
+                    clearInterval(snowInterval);
+                    snowInterval = null;
+                    isSnowing = false;
+                    snowBtn.textContent = '❄️ 下雪';
+                }
+                
+                // 停止音乐
+                if (isMusicPlaying) {
+                    stopChristmasMusic();
+                }
                 
                 // 显示爱心界面
                 instruction.style.opacity = '1';
                 instruction.textContent = '点击爱心，向呆呆表白 ❤️';
             });
+            
+            // 切换到圣诞场景时显示返回按钮
+            function switchToChristmasScene() {
+                if (isSceneActive) return;
+                
+                isSceneActive = true;
+                scene.classList.add('scene-active');
+                
+                // 显示表白按钮
+                setTimeout(() => {
+                    loveToggle.classList.add('visible');
+                }, 1000);
+                
+                // 显示返回爱心按钮
+                setTimeout(() => {
+                    backToHeartBtn.classList.add('visible');
+                }, 1500);
+                
+                // 播放背景音乐
+                playChristmasMusic();
+                
+                // 添加圣诞装饰
+                setTimeout(() => {
+                    addTreeOrnaments();
+                    addTreeLights();
+                }, 800);
+                
+                // 开始下雪
+                toggleSnow();
+            }
             
             // 自动展开表白侧边栏（手动打开后5秒提示照片墙）
             let galleryHintTimeout = null;
